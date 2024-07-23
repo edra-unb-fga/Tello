@@ -75,6 +75,11 @@ class TelloControlGUI:
             print(f"Erro ao conectar ao drone Tello: {e}")
             return
 
+        # Verificar se a transmissão de vídeo está funcionando
+        if not self.check_video_stream():
+            print("Erro ao iniciar a transmissão de vídeo do drone.")
+            return
+
         self.behavior_tree = py_trees.trees.BehaviourTree(create_root(self))
         
         try:
@@ -84,6 +89,21 @@ class TelloControlGUI:
             return
 
         self.tick()
+
+    def check_video_stream(self):
+        print("Verificando a transmissão de vídeo...")
+        frame_read = self.drone.get_frame_read()
+        if frame_read is None:
+            print("Não foi possível ler o frame de vídeo.")
+            return False
+
+        frame = frame_read.frame
+        if frame is None or frame.size == 0:
+            print("Frame de vídeo vazio.")
+            return False
+
+        print("Transmissão de vídeo funcionando.")
+        return True
 
     def tick(self):
         try:
@@ -101,6 +121,7 @@ class TelloControlGUI:
         except Exception as e:
             print(f"Erro ao pousar o drone: {e}")
         self.drone.end()
+
 class TakeOff(py_trees.behaviour.Behaviour):
     def __init__(self, name="Decolar"):
         super().__init__(name)

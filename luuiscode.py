@@ -1,3 +1,6 @@
+#diferenca para a v2 = verifica se a camera funciona antes de dar takeoof
+
+
 import py_trees
 import time
 import tkinter as tk
@@ -6,6 +9,7 @@ from djitellopy import Tello
 import cv2
 import mediapipe as mp
 import numpy as np
+
 
 class TelloControlGUI:
     def __init__(self, master):
@@ -77,6 +81,11 @@ class TelloControlGUI:
             print(f"Erro ao conectar ao drone Tello: {e}")
             return
 
+        # Verificar se a transmissão de vídeo está funcionando
+        if not self.check_video_stream():
+            print("Erro ao iniciar a transmissão de vídeo do drone.")
+            return
+
         self.behavior_tree = py_trees.trees.BehaviourTree(create_root(self))
         
         try:
@@ -86,6 +95,21 @@ class TelloControlGUI:
             return
 
         self.tick()
+
+    def check_video_stream(self):
+        print("Verificando a transmissão de vídeo...")
+        frame_read = self.drone.get_frame_read()
+        if frame_read is None:
+            print("Não foi possível ler o frame de vídeo.")
+            return False
+
+        frame = frame_read.frame
+        if frame is None or frame.size == 0:
+            print("Frame de vídeo vazio.")
+            return False
+
+        print("Transmissão de vídeo funcionando.")
+        return True
 
     def tick(self):
         try:
