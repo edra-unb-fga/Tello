@@ -32,7 +32,7 @@ pip install -r requirements.txt
 1. Certifique-se de que seu drone Tello está ligado e conectado à mesma rede Wi-Fi que seu computador.
 2. Execute o script principal:
    ```
-   python missao_4.py
+   python main.py
    ```
 3. Use a interface gráfica para ajustar as configurações conforme necessário.
 4. Clique no botão "Iniciar Missão" para começar o controle por gestos.
